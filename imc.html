@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<!-- Declara que este documento está em HTML5 -->
+
+<html lang="pt-BR">
+<!-- Elemento raiz do documento, idioma definido como português do Brasil -->
+
+<head>
+    <!-- Cabeçalho da página, contém metadados e recursos não visíveis diretamente -->
+
+    <meta charset="UTF-8">
+    <!-- Define a codificação de caracteres como UTF-8 (acentuação e caracteres especiais) -->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Controla o layout em dispositivos móveis: largura igual à tela do dispositivo, escala inicial 1 -->
+
+    <title>Calculadora IMC</title>
+    <!-- Título exibido na aba do navegador -->
+
+    <style>
+        /* Início da seção de estilos CSS */
+
+        * {
+            /* Seletor universal, aplica a todos os elementos */
+            margin: 0;
+            /* Remove margem padrão */
+            padding: 0;
+            /* Remove preenchimento padrão */
+            box-sizing: border-box
+                /* Inclui bordas e preenchimento no cálculo da largura/altura total */
+        }
+
+        body {
+            /* Estilo para o corpo da página */
+            font-family: Arial, sans-serif;
+            /* Define a fonte padrão */
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* Fundo gradiente diagonal em tons roxos */
+            min-height: 100vh;
+            /* Altura mínima igual a 100% da altura da viewport */
+            display: flex;
+            /* Ativa o modelo flexbox */
+            justify-content: center;
+            /* Centraliza horizontalmente o conteúdo */
+            align-items: center;
+            /* Centraliza verticalmente o conteúdo */
+            padding: 20px
+                /* Espaçamento interno de 20px */
+        }
+
+        .container {
+            /* Estilo para o container principal da calculadora */
+            background: #fff;
+            /* Fundo branco */
+            padding: 30px;
+            /* Espaçamento interno de 30px */
+            border-radius: 20px;
+            /* Bordas arredondadas de 20px */
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .3);
+            /* Sombra escura com deslocamento vertical e blur */
+            max-width: 450px;
+            /* Largura máxima de 450px */
+            width: 100%
+                /* Largura total ajustável */
+        }
+
+        h1 {
+            /* Estilo do título principal */
+            text-align: center;
+            /* Centraliza o texto */
+            margin-bottom: 25px;
+            /* Margem inferior de 25px */
+            font-size: 26px;
+            /* Tamanho da fonte */
+            color: #333
+                /* Cor cinza escuro */
+        }
+
+        .input-group {
+            /* Grupo de cada campo de entrada */
+            margin-bottom: 20px
+                /* Margem inferior para separar os grupos */
+        }
+
+        label {
+            /* Rótulos dos campos */
+            display: block;
+            /* Faz o rótulo ocupar linha inteira */
+            margin-bottom: 8px;
+            /* Margem inferior */
+            font-weight: 600;
+            /* Peso da fonte (negrito semi-forte) */
+            color: #555
+                /* Cor cinza médio */
+        }
+
+        input {
+            /* Campos de entrada de dados */
+            width: 100%;
+            /* Largura total do container pai */
+            padding: 12px;
+            /* Espaçamento interno de 12px */
+            border: 2px solid #e0e0e0;
+            /* Borda sólida cinza clara de 2px */
+            border-radius: 10px;
+            /* Bordas arredondadas */
+            font-size: 16px
+                /* Tamanho da fonte */
+        }
+
+        input:focus {
+            /* Estilo quando o campo está em foco */
+            outline: none;
+            /* Remove o contorno padrão do navegador */
+            border-color: #667eea
+                /* Muda a cor da borda para azul do gradiente */
+        }
+
+        button {
+            /* Estilo do botão */
+            width: 100%;
+            /* Largura total */
+            padding: 14px;
+            /* Espaçamento interno */
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            /* Mesmo gradiente do fundo do body */
+            color: #fff;
+            /* Cor do texto branca */
+            border: none;
+            /* Remove borda padrão */
+            border-radius: 10px;
+            /* Bordas arredondadas */
+            font-size: 18px;
+            /* Tamanho da fonte */
+            font-weight: 700;
+            /* Negrito forte */
+            cursor: pointer
+                /* Cursor de mão ao passar o mouse */
+        }
+
+        .resultado,
+        .erro {
+            /* Estilos comuns para div de resultado e erro */
+            display: none;
+            /* Inicialmente ocultos */
+            margin-top: 20px;
+            /* Margem superior */
+            padding: 20px;
+            /* Espaçamento interno */
+            background: #f8f9fa;
+            /* Fundo cinza muito claro */
+            border-radius: 10px;
+            /* Bordas arredondadas */
+            text-align: center
+                /* Texto centralizado */
+        }
+
+        .resultado.show,
+        .erro.show {
+            /* Quando a classe 'show' é adicionada */
+            display: block
+                /* Mostra o elemento */
+        }
+
+        .imc-valor {
+            /* Estilo do valor do IMC */
+            font-size: 32px;
+            /* Fonte grande */
+            font-weight: 700;
+            /* Negrito */
+            color: #667eea;
+            /* Cor azul do gradiente */
+            margin: 10px 0
+                /* Margem vertical de 10px */
+        }
+
+        .classificacao {
+            /* Estilo da classificação do IMC */
+            font-size: 18px;
+            margin-top: 10px
+        }
+
+        .erro {
+            /* Estilo específico da mensagem de erro */
+            background: #fee;
+            /* Fundo vermelho bem claro */
+            color: #c33
+                /* Texto vermelho */
+        }
+
+        .info {
+            /* Estilo da tabela de referência da OMS */
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f4f8;
+            /* Fundo azul bem claro */
+            border-radius: 10px;
+            font-size: 14px
+        }
+
+        .info p {
+            /* Parágrafos dentro da área de informações */
+            margin: 5px 0
+        }
+
+        @keyframes fadeIn {
+
+            /* Define animação de aparecimento gradual */
+            from {
+                opacity: 0;
+                /* Começa invisível */
+                transform: translateY(20px)
+                    /* Começa deslocado 20px para baixo */
+            }
+
+            to {
+                opacity: 1;
+                /* Termina visível */
+                transform: translateY(0)
+                    /* Termina na posição original */
+            }
+        }
+
+        .resultado.show {
+            /* Animação aplicada quando o resultado aparece */
+            animation: fadeIn .3s ease
+                /* Duração 0.3 segundos, curva de aceleração suave */
+        }
+    </style>
+    <!-- Fim da seção de estilos -->
+
+</head>
+
+<body>
+    <!-- Corpo da página, conteúdo visível -->
+
+    <div class="container">
+        <!-- Div principal que agrupa todos os elementos da calculadora -->
+
+        <h1>📊 Calculadora IMC</h1>
+        <!-- Título principal com emoji de gráfico -->
+
+        <div class="input-group">
+            <!-- Grupo do campo peso -->
+            <label>⚖️ Peso (kg):</label>
+            <!-- Rótulo com emoji de balança -->
+            <input type="number" id="p" step="0.1" placeholder="Ex: 70">
+            <!-- Campo numérico com id 'p', incremento de 0.1, placeholder exemplificando -->
+        </div>
+
+        <div class="input-group">
+            <!-- Grupo do campo altura -->
+            <label>📏 Altura (m):</label>
+            <!-- Rótulo com emoji de régua -->
+            <input type="number" id="a" step="0.01" placeholder="Ex: 1.75">
+            <!-- Campo numérico com id 'a', incremento de 0.01 -->
+        </div>
+
+        <button onclick="c()">Calcular IMC</button>
+        <!-- Botão que chama a função 'c' ao ser clicado -->
+
+        <div id="r" class="resultado">
+            <!-- Div para exibir o resultado, inicialmente oculta, id 'r' -->
+            <div>Seu IMC é:</div>
+            <!-- Texto estático -->
+            <div class="imc-valor" id="iv">-</div>
+            <!-- Onde será exibido o valor numérico do IMC -->
+            <div class="classificacao" id="c">-</div>
+            <!-- Onde será exibida a classificação textual -->
+        </div>
+
+        <div id="e" class="erro">
+            <!-- Div para exibir erros, id 'e' -->
+            ⚠️ <span id="em"></span>
+            <!-- Span vazio onde a mensagem de erro será inserida -->
+        </div>
+
+        <div class="info">
+            <!-- Tabela de referência da OMS -->
+            <h3>📋 Referência (OMS)</h3>
+            <p><strong>&lt;18,5</strong> → Abaixo do peso</p>
+            <p><strong>18,5-24,9</strong> → Peso normal</p>
+            <p><strong>25-29,9</strong> → Sobrepeso</p>
+            <p><strong>30-34,9</strong> → Obesidade I</p>
+            <p><strong>35-39,9</strong> → Obesidade II</p>
+            <p><strong>≥40</strong> → Obesidade III</p>
+        </div>
+    </div>
+
+    <script>
+        // Início do JavaScript
+
+        function c() {
+            // Função principal de cálculo, chamada 'c' (nome curto, original do código)
+
+            // Obtém os valores dos inputs e converte para número decimal
+            let p = parseFloat(document.getElementById('p').value),
+                a = parseFloat(document.getElementById('a').value),
+                // Referências para elementos DOM usados várias vezes
+                rd = document.getElementById('r'),
+                ed = document.getElementById('e'),
+                iv = document.getElementById('iv'),
+                cl = document.getElementById('c'),
+                em = document.getElementById('em');
+
+            // Remove a classe 'show' para esconder resultado e erro (caso estejam visíveis)
+            rd.classList.remove('show');
+            ed.classList.remove('show');
+
+            // Validação 1: campos vazios ou não numéricos
+            if (isNaN(p) || isNaN(a)) {
+                em.innerText = 'Preencha ambos os campos.'; // Define mensagem de erro
+                ed.classList.add('show'); // Exibe a div de erro
+                return; // Interrompe a execução da função
+            }
+
+            // Validação 2: valores devem ser positivos
+            if (p <= 0 || a <= 0) {
+                em.innerText = 'Valores devem ser >0.';
+                ed.classList.add('show');
+                return;
+            }
+
+            // Validação 3: peso máximo de 500kg (limite razoável)
+            if (p > 500) {
+                em.innerText = 'Peso máximo 500kg.';
+                ed.classList.add('show');
+                return;
+            }
+
+            // Validação 4: altura máxima de 2.5m
+            if (a > 2.5) {
+                em.innerText = 'Altura máxima 2.5m.';
+                ed.classList.add('show');
+                return;
+            }
+
+            // Cálculo do IMC: peso dividido pela altura ao quadrado
+            let imc = p / (a * a),
+                imcr = imc.toFixed(2); // Arredonda para 2 casas decimais
+            let txt = '', // Armazenará texto da classificação
+                cor = ''; // Armazenará cor do texto da classificação
+
+            // Classificação do IMC conforme tabela da OMS
+            if (imc < 18.5) {
+                txt = '⚠️ Abaixo do peso';
+                cor = '#f39c12'; // Laranja
+            }
+            else if (imc < 25) {
+                txt = '✅ Peso normal';
+                cor = '#27ae60'; // Verde
+            }
+            else if (imc < 30) {
+                txt = '⚠️ Sobrepeso';
+                cor = '#f39c12'; // Laranja
+            }
+            else if (imc < 35) {
+                txt = '🔴 Obesidade I';
+                cor = '#e74c3c'; // Vermelho
+            }
+            else if (imc < 40) {
+                txt = '🔴🔴 Obesidade II';
+                cor = '#c0392b'; // Vermelho mais escuro
+            }
+            else {
+                txt = '🔴🔴🔴 Obesidade III';
+                cor = '#8b0000'; // Vermelho bem escuro
+            }
+
+            // Atualiza os elementos do DOM com os valores calculados
+            iv.innerText = imcr;      // Exibe o valor do IMC
+            cl.innerText = txt;       // Exibe a classificação
+            cl.style.color = cor;     // Aplica a cor correspondente
+
+            // Exibe a div de resultado
+            rd.classList.add('show');
+
+            // Efeito visual: aplica escala 1.02 ao container
+            document.querySelector('.container').style.transform = 'scale(1.02)';
+            // Após 200ms, volta à escala normal (cria um pequeno "pulo" de feedback)
+            setTimeout(() => document.querySelector('.container').style.transform = 'scale(1)', 200);
+        }
+
+        // Adiciona evento de tecla "Enter" no campo de peso
+        document.getElementById('p').addEventListener('keypress', e => e.key === 'Enter' && c());
+
+        // Adiciona evento de tecla "Enter" no campo de altura
+        document.getElementById('a').addEventListener('keypress', e => e.key === 'Enter' && c());
+
+        // Para cada campo ('p' e 'a'), adiciona evento de input (digitação)
+        // que remove a mensagem de erro automaticamente
+        ['p', 'a'].forEach(id =>
+            document.getElementById(id).addEventListener('input', () =>
+                document.getElementById('e').classList.remove('show')
+            )
+        );
+    </script>
+    <!-- Fim do JavaScript -->
+
+</body>
+
+</html>
